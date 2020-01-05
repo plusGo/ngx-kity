@@ -2,6 +2,7 @@
  * 图形事件包装类
  * */
 import {KityPoint} from '../model/kity-point';
+import {KityMatrix} from '../model/kity-matrix';
 
 export class ShapeEvent {
   target: any;
@@ -76,8 +77,8 @@ export class ShapeEvent {
       eventClient && eventClient.clientY || 0
     );
 
-    var pTarget = Matrix.transformPoint(pScreen, targetNode.getScreenCTM().inverse());
-    var pRefer = Matrix.getCTM(target, refer || 'view').transformPoint(pTarget);
+    const pTarget = KityMatrix.transformPoint(pScreen, targetNode.getScreenCTM().inverse());
+    const pRefer = KityMatrix.getCTM(target, refer || 'view').transformPoint(pTarget);
 
     return pRefer;
   }
