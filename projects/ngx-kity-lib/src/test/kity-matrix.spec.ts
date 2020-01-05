@@ -1,5 +1,4 @@
 import {async} from '@angular/core/testing';
-import {KityBox} from '../lib/model/kity-box';
 import {KityMatrix} from '../lib/model/kity-matrix';
 
 
@@ -22,6 +21,12 @@ describe('KityMatrix Test', () => {
 
   });
 
+  it('should mergeMatrixData', () => {
+    const matrix = new KityMatrix();
+    const matrix2 = KityMatrix.createFrom(matrix);
+
+    expect(KityMatrix.mergeMatrixData(matrix.m, matrix2.m)).toEqual(new KityMatrix(1, 0, 0, 1, 0, 0).m);
+  });
 
 
 });

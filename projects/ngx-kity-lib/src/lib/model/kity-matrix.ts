@@ -1,13 +1,15 @@
 import {KityPoint} from './kity-point';
 import {KityBox} from './kity-box';
+// 坐标系参照物
+export type MatrixRefer = 'screen' | 'doc' | 'paper' | 'view' | 'top' | 'parent' | any;
 
-export interface KityMatrixValue {
-  a: number;
-  b: number;
-  c: number;
-  d: number;
-  e: number;
-  f: number;
+export interface MatrixValue {
+  a: number; // 正常值为1，定义的是scaleX通过设置x轴的值来定义缩放。值：>=0;
+  b: number; // 正常值为0，定义的是skew，定义2D倾斜
+  c: number; //  正常值为0，定义的是rotate定义2D旋转角度
+  d: number; // 正常值为1，定义的是scaleY通过设置Y轴的值来定义缩放。值：>=0;
+  e: number; //  正常值为0，定义的是translateX通过设置X轴的值来定义左右位移。值：任意
+  f: number; //  正常值为0，定义的是translateY通过设置Y轴的值来定义上下位移。值：任意
 }
 
 /**
@@ -16,7 +18,7 @@ export interface KityMatrixValue {
 export class KityMatrix {
   public static mPattern = /matrix\s*\((.+)\)/i;
 
-  m: KityMatrixValue;
+  m: MatrixValue;
 
   public static createFrom(matrix: KityMatrix): KityMatrix {
     return new KityMatrix(matrix.m.a, matrix.m.b, matrix.m.c, matrix.m.d, matrix.m.e, matrix.m.f);
@@ -27,7 +29,7 @@ export class KityMatrix {
   }
 
   // 注意，合并的结果是先执行m2，再执行m1的结果
-  public static mergeMatrixData(m2: KityMatrixValue, m1: KityMatrixValue): KityMatrixValue {
+  public static mergeMatrixData(m2: MatrixValue, m1: MatrixValue): MatrixValue {
     return {
       a: m1.a * m2.a + m1.c * m2.b,
       b: m1.b * m2.a + m1.d * m2.b,
@@ -39,7 +41,7 @@ export class KityMatrix {
   }
 
   // 获得从 node 到 refer 的变换矩阵
-  public static getCTM(target: any, refer): KityMatrix {
+  public static getCTM(target: any, refer: MatrixRefer = 'parent'): KityMatrix {
     let ctm = {
       a: 1,
       b: 0,
@@ -49,8 +51,6 @@ export class KityMatrix {
       f: 0
     };
     const node = target.shapeNode || target.node;
-
-    refer = refer || 'parent';
 
     /**
      * 由于新版chrome(dev 48.0)移除了getTransformToElement这个方法可能导致报错，这里做兼容处理
@@ -104,7 +104,7 @@ export class KityMatrix {
     return ctm ? new KityMatrix(ctm.a, ctm.b, ctm.c, ctm.d, ctm.e, ctm.f) : new KityMatrix();
   }
 
-  public static d2r(deg: number) {
+  public static d2r(deg: number): number {
     return deg * Math.PI / 180;
   }
 
@@ -138,7 +138,7 @@ export class KityMatrix {
   /**
    * 已知屏幕坐标，已知矩阵，求svg对象坐标
    */
-  public static transformPoint(x: number | any, y: number, m?: KityMatrixValue) {
+  public static transformPoint(x: number | any, y: number, m?: MatrixValue) {
     if (typeof y === 'object') {
       m = y;
       y = (x as any).y;
@@ -281,7 +281,7 @@ export class KityMatrix {
     return new KityMatrix(aa, bb, cc, dd, ee, ff);
   }
 
-  getMatrix(): KityMatrixValue {
+  getMatrix(): MatrixValue {
     return Object.assign({}, this.m);
   }
 
@@ -323,7 +323,7 @@ export class KityMatrix {
 
   transformPoint(...args) {
     // todo
-    return KityMatrix.transformPoint(...args, this.m);
+    // return KityMatrix.transformPoint(...args, this.m);
     return KityMatrix.transformPoint.apply(null, [].slice.call(arguments).concat([this.m]));
   }
 
