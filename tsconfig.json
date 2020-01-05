@@ -17,7 +17,15 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "ngx-kity-lib": [
+        "dist/ngx-kity-lib"
+      ],
+      "ngx-kity-lib/*": [
+        "dist/ngx-kity-lib/*"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
