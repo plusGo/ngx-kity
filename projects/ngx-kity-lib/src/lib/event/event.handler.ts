@@ -9,7 +9,7 @@ export class EventHandler {
   public static USER_HANDLER_CACHE = {};
   public static GUID = 0;
 
-  private readonly guid;
+  public readonly guid;
 
 
   constructor() {
@@ -18,27 +18,32 @@ export class EventHandler {
     EventHandler.USER_HANDLER_CACHE[this.guid] = {};
   }
 
-  /**
-   * 添加事件
-   */
-  public static addEvent(type: KityEventType, hanlder, isOnce: boolean): EventHandler {
-    if (typeof type === 'string') {
-      type = type.match(/\S+/g);
-    }
-    return EventHandler;
-  }
-
 
   /**
    * 执行绑定, 该方法context为shape或者mixin了eventhandler的对象
    */
-  private listen(node: Node, type: KityEventType, handler: any, isOnce: boolean): void {
+  listen(node: Node, type: KityEventType, handler: (e) => any | void, isOnce: boolean): void {
     const eid = this.guid;
     // 内部监听器
     if (!EventHandler.INNER_HANDLER_CACHE[eid][type]) {
       EventHandler.INNER_HANDLER_CACHE[eid][type] = (e) => {
         e = new ShapeEvent(e || window.event);
-
+        // tslint:disable-next-line:prefer-for-of
+        for (let i = 0; i < EventHandler.USER_HANDLER_CACHE[eid][type].length; i++) {
+          const fn = EventHandler.USER_HANDLER_CACHE[eid][type][i];
+          let result;
+          if (fn) {
+            result = fn(e);
+            // once 绑定， 执行完后删除
+            if (isOnce) {
+              this.off(type, fn);
+            }
+          }
+          // 如果用户handler里return了false， 则该节点上的此后的同类型事件将不再执行
+          if (!result) {
+            return result;
+          }
+        }
       };
     }
 
@@ -61,6 +66,18 @@ export class EventHandler {
       node.addEventListener(type, handler, false);
     } else {
       (node as any).attachEvent('on' + type, handler);
+    }
+  }
+
+  private off(type: KityEventType, fn: any) {
+
+  }
+
+  deleteDomEvent(node: Node, type: KityEventType, handler: (e) => void | any) {
+    if (node.removeEventListener) {
+      node.removeEventListener(type, handler, false);
+    } else {
+      (node as any).detachEvent(type, handler);
     }
   }
 }
