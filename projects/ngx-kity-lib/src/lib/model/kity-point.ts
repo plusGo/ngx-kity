@@ -37,6 +37,9 @@ export class KityPoint {
     }
   }
 
+  /**
+   * 不会修改原有的点，而是产生新的点
+   */
   offset(offsetX: number, offsetY: number): KityPoint {
     return new KityPoint(this.x + offsetX, this.y + offsetY);
   }

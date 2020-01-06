@@ -138,12 +138,7 @@ export class KityMatrix {
   /**
    * 已知屏幕坐标，已知矩阵，求svg对象坐标
    */
-  public static transformPoint(x: number | any, y: number, m?: MatrixValue) {
-    if (typeof y === 'object') {
-      m = y;
-      y = (x as any).y;
-      x = (x as any).x;
-    }
+  public static transformPoint(x: number, y: number, m: MatrixValue) {
     return new KityPoint(
       m.a * x + m.c * y + m.e,
       m.b * x + m.d * y + m.f
@@ -321,10 +316,8 @@ export class KityMatrix {
       m1.f === m2.f;
   }
 
-  transformPoint(...args) {
-    // todo
-    // return KityMatrix.transformPoint(...args, this.m);
-    return KityMatrix.transformPoint.apply(null, [].slice.call(arguments).concat([this.m]));
+  transformPoint(x: number, y: number) {
+    return KityMatrix.transformPoint(x, y, this.m);
   }
 
   transformBox(box) {

@@ -1,5 +1,5 @@
 import {async} from '@angular/core/testing';
-import {KityBox} from '../lib/model/kity-box';
+import {KityBox} from '../../lib/model/kity-box';
 
 
 describe('KityBox Test', () => {

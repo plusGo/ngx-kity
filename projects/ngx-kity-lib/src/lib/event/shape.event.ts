@@ -77,8 +77,8 @@ export class ShapeEvent {
       eventClient && eventClient.clientY || 0
     );
 
-    const pTarget = KityMatrix.transformPoint(pScreen, targetNode.getScreenCTM().inverse());
-    const pRefer = KityMatrix.getCTM(target, refer || 'view').transformPoint(pTarget);
+    const pTarget = KityMatrix.transformPoint(pScreen.x, pScreen.y, targetNode.getScreenCTM().inverse());
+    const pRefer = KityMatrix.getCTM(target, refer || 'view').transformPoint(pTarget.x, pTarget.y);
 
     return pRefer;
   }
