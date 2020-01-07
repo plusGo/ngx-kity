@@ -1,6 +1,7 @@
 import {ShapeEvent} from './shape.event';
 
 export type KityEventType = string;
+export type KityEventHandler = (e) => void | any;
 
 export class EventHandler {
   // 内部处理器缓存
@@ -22,7 +23,7 @@ export class EventHandler {
   /**
    * 执行绑定, 该方法context为shape或者mixin了eventhandler的对象
    */
-  listen(node: Node, type: KityEventType, handler: (e) => any | void, isOnce: boolean): void {
+  listen(node: Node, type: KityEventType, handler: KityEventHandler, isOnce: boolean): void {
     const eid = this.guid;
     // 内部监听器
     if (!EventHandler.INNER_HANDLER_CACHE[eid][type]) {
@@ -61,7 +62,7 @@ export class EventHandler {
     }
   }
 
-  bindDomEvent(node: Node, type: KityEventType, handler) {
+  bindDomEvent(node: Node, type: KityEventType, handler: KityEventHandler) {
     if (node.addEventListener) {
       node.addEventListener(type, handler, false);
     } else {
@@ -73,12 +74,18 @@ export class EventHandler {
 
   }
 
-  deleteDomEvent(node: Node, type: KityEventType, handler: (e) => void | any) {
+  deleteDomEvent(node: Node, type: KityEventType, handler: KityEventHandler) {
     if (node.removeEventListener) {
       node.removeEventListener(type, handler, false);
     } else {
       (node as any).detachEvent(type, handler);
     }
+  }
+
+  // 添加事件统一入口
+  addEventListener(eventType: KityEventType, handler: KityEventHandler, isOnce = false) {
+
+    return this;
   }
 }
 

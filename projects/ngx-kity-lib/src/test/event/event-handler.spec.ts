@@ -35,5 +35,53 @@ describe('EventHandler Test', () => {
     expect(EventHandler.USER_HANDLER_CACHE[eventHandler.guid][eventType].length).toEqual(1);
   });
 
+  it('should bindDomEvent addEventListener', () => {
+    const eventHandler = new EventHandler();
+    const eventType = 'testEvent';
+    const handler = () => null;
+    const node = {addEventListener: (a, b, c) => null} as any;
+    spyOn(node, 'addEventListener');
+
+    eventHandler.bindDomEvent(node, eventType, handler);
+
+    expect(node.addEventListener).toHaveBeenCalledWith(eventType, handler, false);
+  });
+
+  it('should bindDomEvent attachEvent', () => {
+    const eventHandler = new EventHandler();
+    const eventType = 'testEvent';
+    const handler = () => null;
+    const node = {attachEvent: (a, b) => null} as any;
+    spyOn(node, 'attachEvent');
+
+    eventHandler.bindDomEvent(node, eventType, handler);
+
+    expect(node.attachEvent).toHaveBeenCalledWith(`on${eventType}`, handler);
+  });
+
+  it('should deleteDomEvent removeEventListener', () => {
+    const eventHandler = new EventHandler();
+    const eventType = 'testEvent';
+    const handler = () => null;
+    const node = {removeEventListener: (a, b, c) => null} as any;
+    spyOn(node, 'removeEventListener');
+
+    eventHandler.deleteDomEvent(node, eventType, handler);
+
+    expect(node.removeEventListener).toHaveBeenCalledWith(eventType, handler, false);
+  });
+
+  it('should deleteDomEvent detachEvent', () => {
+    const eventHandler = new EventHandler();
+    const eventType = 'testEvent';
+    const handler = () => null;
+    const node = {detachEvent: (a, b) => null} as any;
+    spyOn(node, 'detachEvent');
+
+    eventHandler.deleteDomEvent(node, eventType, handler);
+
+    expect(node.detachEvent).toHaveBeenCalledWith(eventType, handler);
+  });
+
 
 });
